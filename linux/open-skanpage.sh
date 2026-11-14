@@ -3,7 +3,8 @@
 #
 # - Not running: write default scan options for the last-used scanner into Skanpage's state file,
 #   start Skanpage detached, wait for its window, then send the "Preview" shortcut (P).
-# - Already running: focus it and send P. (P toggles: if a preview is already shown, it closes it.)
+# - Already running: focus it and send Space = Scan, which adds a page to the open document (Skanpage closes
+#   an open preview itself first). Press repeatedly for multi-page documents, then save/export the PDF in Skanpage.
 #
 # Skanpage has no CLI/D-Bus way to scan, so the key is sent through Hyprland (hyprctl, Lua dispatchers,
 # Hyprland >= 0.55). Without Hyprland it just opens Skanpage.
@@ -28,16 +29,17 @@ have_hypr() { command -v hyprctl >/dev/null && [ -n "$HYPRLAND_INSTANCE_SIGNATUR
 
 window_open() { hyprctl clients -j 2>/dev/null | grep -q "\"class\": \"$CLASS\""; }
 
-press_preview() {
+# Focus Skanpage and send one of its shortcuts (P = Preview, space = Scan); Qt only reacts when focused.
+send_key() {
     hyprctl dispatch "hl.dsp.focus({ window = \"class:$CLASS\" })" >/dev/null
     sleep 0.3
-    hyprctl dispatch "hl.dsp.send_shortcut({ mods = \"\", key = \"P\", window = \"class:$CLASS\" })" >/dev/null
-    echo "preview requested"
+    hyprctl dispatch "hl.dsp.send_shortcut({ mods = \"\", key = \"$1\", window = \"class:$CLASS\" })" >/dev/null
+    echo "sent $1 to skanpage"
 }
 
 if pgrep -x skanpage >/dev/null; then
-    if [ "$PREVIEW" = 1 ] && have_hypr; then
-        press_preview
+    if have_hypr; then
+        send_key space
     else
         command -v notify-send >/dev/null && notify-send -a "SCX-4500" "Scan to PC" "Skanpage is already open"
     fi
@@ -65,6 +67,6 @@ if [ "$PREVIEW" = 1 ] && have_hypr; then
             sleep 0.5
         done
         sleep "$DELAY"
-        press_preview
+        send_key P
     ) &
 fi

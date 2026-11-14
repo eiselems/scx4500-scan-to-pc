@@ -48,7 +48,7 @@ The actual scan afterwards is ordinary scanning on interface 0 (SANE `xerox_mfp`
 | File | Purpose |
 |---|---|
 | `scx4500-buttond.py` | pyusb daemon: registers (briefly detaching `usblp` from interface 1), polls once per second, re-registers every 10 min and after replug, runs a hook on a button press |
-| `open-skanpage.sh` | default hook (used by the service): writes default scan options (Line Art, 300 dpi; `SCX_MODE` / `SCX_RESOLUTION`) for the last-used scanner into `~/.local/state/skanpagestaterc`, opens Skanpage detached and starts a **preview** by sending its `P` shortcut via `hyprctl` (Skanpage has no CLI/D-Bus scan trigger). If Skanpage is already open it just focuses it and sends `P` (note: `P` toggles the preview) |
+| `open-skanpage.sh` | default hook (used by the service): writes default scan options (Line Art, 300 dpi; `SCX_MODE` / `SCX_RESOLUTION`) for the last-used scanner into `~/.local/state/skanpagestaterc`, opens Skanpage detached and starts a **preview** by sending its `P` shortcut via `hyprctl` (Skanpage has no CLI/D-Bus scan trigger). If Skanpage is already open, a press focuses it and sends `Space` = **Scan**, adding a page to the open document – press repeatedly for multi-page PDFs, then save in Skanpage |
 | `scan-hook.sh` | alternative hook: `scanimage` → `~/Scans/scan_<timestamp>.png`; gets `SCX_EVENT` / `SCX_DEST` in the environment |
 | `99-scx4500.rules` | udev rule: device accessible to group `scanner` |
 | `scx4500-buttond.service` | systemd user unit, starts with the graphical session (expects the files in `~/scx4500/`, e.g. `ln -s <repo>/linux ~/scx4500`) |
@@ -87,7 +87,7 @@ this repo, so edits here take effect after a restart:
 | `~/scx4500` | **symlink** → `~/Projects/scx4500-scan-to-pc/linux` (the path the unit file uses) |
 | Unit file | `~/.config/systemd/user/scx4500-buttond.service` (a **copy** of `linux/scx4500-buttond.service`) |
 | Enabled via | `~/.config/systemd/user/graphical-session.target.wants/` (starts with the Hyprland session) |
-| Active hook | `linux/open-skanpage.sh` (button → Skanpage, Line Art 300 dpi, preview starts ~3 s after the window appears) |
+| Active hook | `linux/open-skanpage.sh` (first press → Skanpage, Line Art 300 dpi, preview ~3 s after the window appears; further presses → scan another page) |
 | Skanpage scan defaults | `~/.local/state/skanpagestaterc`, group `[Options For smfp:usb;04e8;3426;…]` (rewritten by the hook on each launch) |
 | Logs | `journalctl --user -u scx4500-buttond` |
 

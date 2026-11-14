@@ -38,6 +38,7 @@ Points 2–4 can be worked out on Linux with `scx4500-buttond.py -v`, which logs
 - [x] Hook sets defaults (Line Art, 300 dpi) and auto-starts a preview via Hyprland `send_shortcut` P (tested 2026-11-14).
   Skanpage's shortcuts (from its embedded QML): Preview `P`, Scan `Space`, Cancel `Esc`; they only fire when the
   window is focused and the scanner is ready, hence focus + a fixed delay (`SCX_PREVIEW_DELAY`, default 3 s).
+- [x] Press while Skanpage is open → `Space` = Scan, adds a page → multi-page PDF via Skanpage's save (tested 2026-11-14).
 - [ ] Run a real scan from `scan-hook.sh`.
 - [ ] Workflow-picker popup as the hook (choose: Skanpage, scan to folder, scan to mail, …).
 - [ ] Press with different panel settings and log the events (question 2).
