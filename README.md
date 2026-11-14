@@ -69,6 +69,8 @@ on real hardware yet. Open questions:
 - Multiple destinations: changing the count byte / adding names should give a choice on the panel and
   change the last event byte.
 
+See [progress.md](progress.md) for status, open questions and ideas.
+
 ## Evidence & tools
 
 - `captures/scx4500_20261114_112404.pcap` – Scan2Pc start + two button presses (t = 30.7 s, 57.0 s)
