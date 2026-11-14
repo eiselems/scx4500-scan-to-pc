@@ -48,13 +48,14 @@ The actual scan afterwards is ordinary scanning on interface 0 (SANE `xerox_mfp`
 | File | Purpose |
 |---|---|
 | `scx4500-buttond.py` | pyusb daemon: registers (briefly detaching `usblp` from interface 1), polls once per second, re-registers every 10 min and after replug, runs a hook on a button press |
-| `scan-hook.sh` | default hook: `scanimage` → `~/Scans/scan_<timestamp>.png`; gets `SCX_EVENT` / `SCX_DEST` in the environment |
+| `open-skanpage.sh` | default hook (used by the service): opens Skanpage detached, or just notifies if it is already open |
+| `scan-hook.sh` | alternative hook: `scanimage` → `~/Scans/scan_<timestamp>.png`; gets `SCX_EVENT` / `SCX_DEST` in the environment |
 | `99-scx4500.rules` | udev rule: device accessible to group `scanner` |
-| `scx4500-buttond.service` | systemd user unit (expects the files in `~/scx4500/`) |
+| `scx4500-buttond.service` | systemd user unit, starts with the graphical session (expects the files in `~/scx4500/`, e.g. `ln -s <repo>/linux ~/scx4500`) |
 
 ```sh
 sudo apt install python3-usb sane-utils           # or your distro's equivalents
-mkdir -p ~/scx4500 && cp linux/scx4500-buttond.py linux/scan-hook.sh ~/scx4500/ && chmod +x ~/scx4500/*
+mkdir -p ~/scx4500 && cp linux/scx4500-buttond.py linux/open-skanpage.sh linux/scan-hook.sh ~/scx4500/ && chmod +x ~/scx4500/*
 sudo cp linux/99-scx4500.rules /etc/udev/rules.d/ && sudo udevadm control --reload   # then replug the printer
 python3 ~/scx4500/scx4500-buttond.py -v            # try it in the foreground first
 cp linux/scx4500-buttond.service ~/.config/systemd/user/
