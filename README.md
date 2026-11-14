@@ -61,11 +61,15 @@ cp linux/scx4500-buttond.service ~/.config/systemd/user/
 systemctl --user daemon-reload && systemctl --user enable --now scx4500-buttond
 ```
 
-**Status:** the protocol is confirmed from USB captures on Windows; the Linux daemon has not been tested
-on real hardware yet. Open questions:
-- Does usbfs allow the vendor control request while `usblp` is bound to interface 1? (Vendor requests
-  should bypass the interface-claim check; otherwise claim interface 1 around each poll.)
-- Is the registration strictly required, and how long does the printer keep it?
+**Status:** tested on real hardware (Arch Linux, kernel 7.2, pyusb 1.3.1, 2026-11-14): the daemon registers
+(ack `1B A4 00 00 00 06 50 E0 82 C2 44 00`, identical to Windows), idle polls return all zeros, and three
+button presses produced exactly three `21 09 02 01 00 00 00 00` events and three hook runs.
+- The vendor poll works while `usblp` is bound to interface 1; detaching/reattaching `usblp` for the
+  registration works too.
+- A registration survives a replug / host switch: a press was reported before this host had registered.
+
+Still open:
+- How long does the printer keep a registration? (The daemon re-registers every 10 minutes.)
 - Multiple destinations: changing the count byte / adding names should give a choice on the panel and
   change the last event byte.
 

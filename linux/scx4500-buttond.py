@@ -78,7 +78,7 @@ def main():
     logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO,
                         format='%(asctime)s %(levelname)s %(message)s')
 
-    dev, registered_at = None, 0.0
+    dev, registered_at = None, float('-inf')
     while True:
         try:
             if dev is None:
@@ -87,7 +87,7 @@ def main():
                     time.sleep(5)
                     continue
                 log.info('found SCX-4500 on bus %d address %d', dev.bus, dev.address)
-                registered_at = 0.0
+                registered_at = float('-inf')
             if time.monotonic() - registered_at > args.reregister:
                 if register(dev):
                     registered_at = time.monotonic()
