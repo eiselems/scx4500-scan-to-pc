@@ -20,7 +20,10 @@
    **Answered: yes.** Polling works with `usblp` bound; detach/reattach around the registration works.
 2. **Event bytes:** only one sample so far (`21 09 02 01`). Do the middle bytes change with panel settings
    (colour, resolution, …)?
-3. **Multiple destinations:** layout of the registration block for more than one name (941 bytes for one).
+3. ~~**Multiple destinations:**~~ **Answered (2026-11-14): pointless on this model.** The SCX-4500 has no text display
+   (only button LEDs/animation). Registering three zero-separated names is acked (`…44 00`), but a press still
+   reports `21 09 02 01` = destination 1; there is no way to pick on the panel. Workflow choice has to happen on the
+   PC (popup picker as hook).
 4. **Host id and lifetime:** do the 5 host-id bytes matter, and how long does the printer keep a registration?
    The daemon re-registers every 10 minutes to be safe. Observed: a registration survives a replug / host
    switch (a press was reported on Linux before the daemon had registered).
@@ -38,7 +41,8 @@ Points 2–4 can be worked out on Linux with `scx4500-buttond.py -v`, which logs
 - [ ] Run a real scan from `scan-hook.sh`.
 - [ ] Workflow-picker popup as the hook (choose: Skanpage, scan to folder, scan to mail, …).
 - [ ] Press with different panel settings and log the events (question 2).
-- [ ] Experiment with the registration block: two names, different host id (questions 3 and 4).
+- [x] Experiment with multiple names in the registration block (question 3) – no panel menu on the SCX-4500.
+- [ ] Different host id / registration lifetime (question 4).
 - [ ] Fix the Windows `poll_button.ps1` (usbscan `IO_BLOCK_EX` request-type encoding) – optional.
 
 ## Ideas for what to build on top
@@ -55,7 +59,7 @@ Points 2–4 can be worked out on Linux with `scx4500-buttond.py -v`, which logs
 - Run the daemon on a Raspberry Pi / home server the printer is plugged into, so it works without a PC.
 
 **Needs the open experiments:**
-- Several destinations on the panel ("Paperless", "E-mail", "Folder") mapped to different hooks (question 3).
+- ~~Several destinations on the panel~~ – not possible on the SCX-4500 (no display), see question 3.
 - Use panel settings from the event bytes (question 2).
 
 **Suggested first build:** Pi or home server running the daemon, hook = `scanimage` → `ocrmypdf` →
