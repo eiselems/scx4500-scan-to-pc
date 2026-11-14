@@ -31,7 +31,9 @@ Points 2–4 can be worked out on Linux with `scx4500-buttond.py -v`, which logs
 
 ## Next steps
 - [x] On the Linux box: `scanimage -L`, then a foreground run of `scx4500-buttond.py -v` (questions 1 and 5).
-- [ ] Run a real scan from `scan-hook.sh` and install the systemd user service.
+- [x] Install the systemd user service with the `open-skanpage.sh` hook – button opens Skanpage (tested 2026-11-14).
+- [ ] Run a real scan from `scan-hook.sh`.
+- [ ] Workflow-picker popup as the hook (choose: Skanpage, scan to folder, scan to mail, …).
 - [ ] Press with different panel settings and log the events (question 2).
 - [ ] Experiment with the registration block: two names, different host id (questions 3 and 4).
 - [ ] Fix the Windows `poll_button.ps1` (usbscan `IO_BLOCK_EX` request-type encoding) – optional.

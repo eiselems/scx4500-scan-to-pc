@@ -76,6 +76,36 @@ Still open:
 
 See [progress.md](progress.md) for status, open questions and ideas.
 
+## Running setup – where to find it again
+
+On the author's machine (Arch/Omarchy, Hyprland) the daemon runs as a **systemd user service** straight from
+this repo, so edits here take effect after a restart:
+
+| What | Where |
+|---|---|
+| Repo checkout | `~/Projects/scx4500-scan-to-pc` |
+| `~/scx4500` | **symlink** → `~/Projects/scx4500-scan-to-pc/linux` (the path the unit file uses) |
+| Unit file | `~/.config/systemd/user/scx4500-buttond.service` (a **copy** of `linux/scx4500-buttond.service`) |
+| Enabled via | `~/.config/systemd/user/graphical-session.target.wants/` (starts with the Hyprland session) |
+| Active hook | `linux/open-skanpage.sh` (button → Skanpage) |
+| Logs | `journalctl --user -u scx4500-buttond` |
+
+```sh
+systemctl --user status scx4500-buttond          # is it running?
+journalctl --user -u scx4500-buttond -f          # live log: "registered", "button pressed", hook exit codes
+systemctl --user restart scx4500-buttond         # after editing scx4500-buttond.py or a hook
+systemctl --user disable --now scx4500-buttond   # turn it off
+```
+
+- **Change what the button does:** edit the hook, or point `--hook` in the unit file to another script
+  (e.g. `scan-hook.sh`, or a future workflow-picker popup), then
+  `cp linux/scx4500-buttond.service ~/.config/systemd/user/ && systemctl --user daemon-reload && systemctl --user restart scx4500-buttond`.
+  The unit file is a copy, so changes to it in the repo need that `cp` + `daemon-reload`; script changes only need a restart.
+- **Debug in the foreground:** `systemctl --user stop scx4500-buttond && python3 ~/scx4500/scx4500-buttond.py -v`
+  (only one process can use the printer at a time).
+- Device access works without the udev rule here (the logged-in user gets an ACL on the USB device);
+  `usblp` is bound to interface 1 and is detached/reattached automatically for the registration.
+
 ## Evidence & tools
 
 - `captures/scx4500_20261114_112404.pcap` – Scan2Pc start + two button presses (t = 30.7 s, 57.0 s)
