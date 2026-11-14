@@ -1,0 +1,5 @@
+# Samsung's proprietary software and local-only material
+downloads/
+reference/
+NOTES.md
+__pycache__/

@@ -1,0 +1,3 @@
+# Give the "scanner" group access to the Samsung SCX-4500 so scx4500-buttond can run unprivileged.
+# Install: sudo cp 99-scx4500.rules /etc/udev/rules.d/ && sudo udevadm control --reload && replug the printer
+SUBSYSTEM=="usb", ATTR{idVendor}=="04e8", ATTR{idProduct}=="3426", MODE="0664", GROUP="scanner"

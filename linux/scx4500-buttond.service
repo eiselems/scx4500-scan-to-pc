@@ -1,0 +1,13 @@
+# systemd user service: cp to ~/.config/systemd/user/ then
+#   systemctl --user daemon-reload && systemctl --user enable --now scx4500-buttond
+# (your user must be in the "scanner" group, see 99-scx4500.rules)
+[Unit]
+Description=Samsung SCX-4500 Scan-to-PC button daemon
+
+[Service]
+ExecStart=/usr/bin/python3 %h/scx4500/scx4500-buttond.py --hook %h/scx4500/scan-hook.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
